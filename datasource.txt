@@ -1,0 +1,75 @@
+package Lab11;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+//import Lab11.MobileProps;
+
+import Lab11properties.MobileProps;
+import oracle.jdbc.pool.OracleDataSource;
+
+import java.sql.*;
+
+public class Creatingmobiledatasource {
+	public static void main(String[] args) 
+	{
+		FileInputStream fis=null;
+		MobileProps p=new MobileProps();
+		Properties por=new Properties();
+		
+		try
+		{
+		OracleDataSource ods=new OracleDataSource();
+		try
+		{
+		fis=new FileInputStream("Example.properties");
+		por.load(fis);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		ods.setURL(p.getsproperty(por));// or ods.setURL(por.getProperty())
+		//ods.setUser("srujana");
+		ods.setUser(por.getProperty("user"));
+		ods.setPassword(por.getProperty("password"));
+		ods.setDriverType(por.getProperty("driver"));
+		ods.setNetworkProtocol("tcp");
+		
+		/*ods.setURL("jdbc:oracle:thin:@localhost:1521:XE");
+		ods.setUser("srujana");
+		ods.setPassword("Srujana17");
+		ods.setDriverType("thin");
+		ods.setNetworkProtocol("tcp");
+		*/
+		System.out.println("datasourcreated");
+		Connection conn=ods.getConnection("srujana","Srujana17");
+		Statement s=conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+		//ResultSet rset=s.executeQuery("create table purchaseddetails(purchaseid NUMBER, cname vARCHAR2(20), mailid  VARCHAR2(30),phoneno VARCHAR2(20), purchasedate DATE, mobileid references mobile(mobileid)) ");
+		//PreparedStatement psmt=conn.prepareStatement("insert into purchaseddetails values(?,?,?,?,?,?)");
+		//ResultSet rset2=s.executeQuery("CREATE TABLE mobile (mobileid NUMBER PRIMARY KEY, name VARCHAR2 (20), price NUMBER(10,2),quantity VARCHAR2(20))");
+		/*ResultSet rset3=s.executeQuery("insert into mobiles values(1001,'nokia lumia 520',8000,20)");
+		ResultSet rset4=s.executeQuery("insert into mobiles values(1002,'Samsung galaxy IV',38000,40)");
+		ResultSet rset5=s.executeQuery("insert into mobiles values(1003,'Sony xperia C',15000,30)");
+		*/
+		//ResultSet rset2=s.executeQuery("insert into purchaseddetails (purchaseid,cname,mailid,phoneno,purchasedate)values(1246,'jop','jop@gmail.com','789456123',to_date('01-02-2020','dd-mm-yyyy'))");
+		PreparedStatement psmt=conn.prepareStatement("insert into purchasingdetails(mobileid) values(1001));
+		ResultSet rs=s.executeQuery("select * from purchasingdetails");
+		//ResultSet r=s.executeQuery("select * from mobiles");
+		/*while(r.next())
+		{
+			System.out.println(r.getInt("mobileid")+" "+r.getString("name")+" "+r.getDouble("price")+" "+r.getString("quantity")+" ");
+		}*/
+		while(rs.next())
+		{
+			System.out.println(rs.getInt("purchaseid")+" "+rs.getString("cname")+" "+rs.getString("mailid")+" "+rs.getString("phoneno")+" "+" "+rs.getDate("purchasedate"));
+		}
+		}
+		catch(SQLException s)
+		{
+			s.printStackTrace();
+		}
+		
+	}	
+
+}

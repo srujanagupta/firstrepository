@@ -1,1 +1,2 @@
-oracle sql,uml,core java,devOps
+oracle sql,uml,core java,DevOps....
+module1 exam is on 14 february
